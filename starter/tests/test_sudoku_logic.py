@@ -53,3 +53,56 @@ def test_generate_puzzle_returns_valid_9x9_puzzle_and_solution():
                 for col in range(box_col, box_col + 3):
                     values.append(solution[row][col])
             assert sorted(values) == list(range(1, 10))
+def test_solved_board_has_exactly_one_solution():
+    board = [
+        [5, 3, 4, 6, 7, 8, 9, 1, 2],
+        [6, 7, 2, 1, 9, 5, 3, 4, 8],
+        [1, 9, 8, 3, 4, 2, 5, 6, 7],
+        [8, 5, 9, 7, 6, 1, 4, 2, 3],
+        [4, 2, 6, 8, 5, 3, 7, 9, 1],
+        [7, 1, 3, 9, 2, 4, 8, 5, 6],
+        [9, 6, 1, 5, 3, 7, 2, 8, 4],
+        [2, 8, 7, 4, 1, 9, 6, 3, 5],
+        [3, 4, 5, 2, 8, 6, 1, 7, 9],
+    ]
+
+    assert sudoku_logic.count_solutions(board, limit=2) == 1
+
+
+def test_empty_board_has_more_than_one_solution():
+    board = sudoku_logic.create_empty_board()
+
+    assert sudoku_logic.count_solutions(board, limit=2) > 1
+
+
+def test_generate_puzzle_has_exactly_one_solution():
+    puzzle, _ = sudoku_logic.generate_puzzle(35)
+
+    assert sudoku_logic.count_solutions(puzzle, limit=2) == 1
+
+
+def test_generated_solution_is_valid():
+    puzzle, solution = sudoku_logic.generate_puzzle(35)
+
+    assert len(solution) == sudoku_logic.SIZE
+    assert all(len(row) == sudoku_logic.SIZE for row in solution)
+
+    for row in solution:
+        assert sorted(row) == list(range(1, sudoku_logic.SIZE + 1))
+
+    for col in range(sudoku_logic.SIZE):
+        values = [solution[row][col] for row in range(sudoku_logic.SIZE)]
+        assert sorted(values) == list(range(1, sudoku_logic.SIZE + 1))
+
+    for box_row in range(0, sudoku_logic.SIZE, 3):
+        for box_col in range(0, sudoku_logic.SIZE, 3):
+            values = []
+            for row in range(box_row, box_row + 3):
+                for col in range(box_col, box_col + 3):
+                    values.append(solution[row][col])
+            assert sorted(values) == list(range(1, sudoku_logic.SIZE + 1))
+
+    for row in range(sudoku_logic.SIZE):
+        for col in range(sudoku_logic.SIZE):
+            if puzzle[row][col] != sudoku_logic.EMPTY:
+                assert puzzle[row][col] == solution[row][col]
