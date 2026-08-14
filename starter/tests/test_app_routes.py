@@ -42,3 +42,55 @@ def test_check_route_handles_missing_game():
 
     assert response.status_code == 400
     assert response.get_json()['error'] == 'No game in progress'
+def test_new_game_easy_difficulty_returns_45_clues():
+    with app_module.app.test_client() as client:
+        response = client.get('/new?difficulty=easy')
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    puzzle = payload['puzzle']
+
+    clues = sum(
+        cell != 0
+        for row in puzzle
+        for cell in row
+    )
+
+    assert clues == 45
+    assert payload['difficulty'] == 'easy'
+
+
+def test_new_game_medium_difficulty_returns_35_clues():
+    with app_module.app.test_client() as client:
+        response = client.get('/new?difficulty=medium')
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    puzzle = payload['puzzle']
+
+    clues = sum(
+        cell != 0
+        for row in puzzle
+        for cell in row
+    )
+
+    assert clues == 35
+    assert payload['difficulty'] == 'medium'
+
+
+def test_new_game_hard_difficulty_returns_25_clues():
+    with app_module.app.test_client() as client:
+        response = client.get('/new?difficulty=hard')
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    puzzle = payload['puzzle']
+
+    clues = sum(
+        cell != 0
+        for row in puzzle
+        for cell in row
+    )
+
+    assert clues == 25
+    assert payload['difficulty'] == 'hard'

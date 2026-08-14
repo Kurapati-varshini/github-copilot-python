@@ -34,6 +34,7 @@ def find_empty_cell(board):
         for col in range(SIZE):
             if board[row][col] == EMPTY:
                 return row, col
+
     return None
 
 
@@ -91,35 +92,43 @@ def remove_cells(board, clues):
         for cell in row
     )
 
-    positions = [
-        (row, col)
-        for row in range(SIZE)
-        for col in range(SIZE)
-    ]
+    while remaining > clues:
+        positions = [
+            (row, col)
+            for row in range(SIZE)
+            for col in range(SIZE)
+            if board[row][col] != EMPTY
+        ]
 
-    random.shuffle(positions)
+        random.shuffle(positions)
+        removed = False
 
-    for row, col in positions:
-        if remaining <= clues:
-            break
+        for row, col in positions:
+            if remaining <= clues:
+                break
 
-        if board[row][col] == EMPTY:
-            continue
+            original = board[row][col]
+            board[row][col] = EMPTY
 
-        original = board[row][col]
-        board[row][col] = EMPTY
+            if count_solutions(board, limit=2) == 1:
+                remaining -= 1
+                removed = True
+            else:
+                board[row][col] = original
 
-        if count_solutions(board, limit=2) != 1:
-            board[row][col] = original
-        else:
-            remaining -= 1
+        if not removed:
+            return False
+
+    return True
 
 
 def generate_puzzle(clues=35):
-    board = create_empty_board()
-    fill_board(board)
-    solution = deep_copy(board)
-    remove_cells(board, clues)
-    puzzle = deep_copy(board)
+    while True:
+        board = create_empty_board()
+        fill_board(board)
 
-    return puzzle, solution
+        solution = deep_copy(board)
+
+        if remove_cells(board, clues):
+            puzzle = deep_copy(board)
+            return puzzle, solution

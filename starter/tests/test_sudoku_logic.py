@@ -106,3 +106,37 @@ def test_generated_solution_is_valid():
         for col in range(sudoku_logic.SIZE):
             if puzzle[row][col] != sudoku_logic.EMPTY:
                 assert puzzle[row][col] == solution[row][col]
+def test_easy_puzzle_has_45_prefilled_cells():
+    puzzle, _ = sudoku_logic.generate_puzzle(45)
+
+    clues = sum(
+        cell != sudoku_logic.EMPTY
+        for row in puzzle
+        for cell in row
+    )
+
+    assert clues == 45
+
+
+def test_medium_puzzle_has_35_prefilled_cells():
+    puzzle, _ = sudoku_logic.generate_puzzle(35)
+
+    clues = sum(
+        cell != sudoku_logic.EMPTY
+        for row in puzzle
+        for cell in row
+    )
+
+    assert clues == 35
+
+
+def test_hard_puzzle_has_25_prefilled_cells():
+    puzzle, _ = sudoku_logic.generate_puzzle(25)
+
+    clues = sum(
+        cell != sudoku_logic.EMPTY
+        for row in puzzle
+        for cell in row
+    )
+
+    assert clues == 25
